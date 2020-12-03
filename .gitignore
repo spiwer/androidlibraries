@@ -18,4 +18,3 @@ local.properties
 /app/proguard-rules.pro
 /AndroidStandard/consumer-rules.pro
 /AndroidStandard/proguard-rules.pro
-/scripts/publish-mavencentral.gradle
