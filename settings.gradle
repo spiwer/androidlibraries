@@ -1,3 +1,4 @@
+include ':AndroidRosilla'
 include ':AndroidStandard'
 include ':app'
 rootProject.name = "AndroidLibraries"
