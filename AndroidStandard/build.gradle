@@ -41,6 +41,7 @@ ext {
     PUBLISH_GROUP_ID = 'com.spiwer'
     PUBLISH_ARTIFACT_ID = 'androidstandard'
     PUBLISH_VERSION = android.defaultConfig.versionName
+
 }
 
 apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"

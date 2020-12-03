@@ -13,12 +13,12 @@ apply plugin: 'signing'
 group = PUBLISH_GROUP_ID
 version = PUBLISH_VERSION
 
-ext["signing.keyId"] = 'E78EE4FE'
-ext["signing.password"] = 'Atleast1millionaday.'
-ext["signing.secretKeyRingFile"] = '/Users/spiwer/Downloads/private.pgp'
-ext["ossrhUsername"] = 'spiwer'
-ext["ossrhPassword"] = 'Atleast1millionaday.'
-ext["sonatypeStagingProfileId"] = 'spiwer'
+ext["signing.keyId"] = ''
+ext["signing.password"] = ''
+ext["signing.secretKeyRingFile"] = ''
+ext["ossrhUsername"] = ''
+ext["ossrhPassword"] = ''
+ext["sonatypeStagingProfileId"] = ''
 
 File secretPropsFile = project.rootProject.file('local.properties')
 if (secretPropsFile.exists()) {
@@ -71,9 +71,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:github.com/spiwer/androidstandard.git'
-                    developerConnection = 'scm:git:ssh://github.com/spiwer/androidstandard.git'
-                    url = 'https://github.com/spiwer/androidstandard/tree/main'
+                    connection = 'scm:git:github.com/spiwer/androidlibraries.git'
+                    developerConnection = 'scm:git:ssh://github.com/spiwer/androidlibraries.git'
+                    url = 'https://www.spiwer.com/'
                 }
                 withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')

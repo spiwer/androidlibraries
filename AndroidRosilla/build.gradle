@@ -37,3 +37,12 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
+
+ext {
+    PUBLISH_GROUP_ID = 'com.spiwer'
+    PUBLISH_ARTIFACT_ID = 'androidrosilla'
+    PUBLISH_VERSION = android.defaultConfig.versionName
+
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
