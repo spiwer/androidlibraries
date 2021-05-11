@@ -1,4 +1,4 @@
-include ':AndroidRosilla'
-include ':AndroidStandard'
+include ':androidrosilla'
+include ':androidstandard'
 include ':app'
-rootProject.name = "AndroidLibraries"
+rootProject.name = "SpiwerLibraries"

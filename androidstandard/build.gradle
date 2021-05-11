@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 101
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -32,7 +32,6 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation project(':AndroidStandard')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -40,7 +39,7 @@ dependencies {
 
 ext {
     PUBLISH_GROUP_ID = 'com.spiwer'
-    PUBLISH_ARTIFACT_ID = 'androidrosilla'
+    PUBLISH_ARTIFACT_ID = 'androidstandard'
     PUBLISH_VERSION = android.defaultConfig.versionName
 
 }

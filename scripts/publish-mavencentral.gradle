@@ -13,12 +13,12 @@ apply plugin: 'signing'
 group = PUBLISH_GROUP_ID
 version = PUBLISH_VERSION
 
-ext["signing.keyId"] = ''
-ext["signing.password"] = ''
-ext["signing.secretKeyRingFile"] = ''
-ext["ossrhUsername"] = ''
-ext["ossrhPassword"] = ''
-ext["sonatypeStagingProfileId"] = ''
+ext["signing.keyId"] = 'E78EE4FE'
+ext["signing.password"] = 'Atleast1millionaday.'
+ext["signing.secretKeyRingFile"] = '/Users/spiwer/Downloads/private.pgp'
+ext["ossrhUsername"] = 'spiwer'
+ext["ossrhPassword"] = 'Atleast1millionaday.'
+ext["sonatypeStagingProfileId"] = 'spiwer'
 
 File secretPropsFile = project.rootProject.file('local.properties')
 if (secretPropsFile.exists()) {
