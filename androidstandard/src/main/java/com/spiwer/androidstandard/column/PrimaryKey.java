@@ -3,6 +3,9 @@ package com.spiwer.androidstandard.column;
 
 import com.spiwer.androidstandard.lasting.ETypePrimaryKey;
 
+/**
+ *
+ */
 public class PrimaryKey {
     private final transient String columnName;
     private final transient Class<?> classPrimaryKey;
