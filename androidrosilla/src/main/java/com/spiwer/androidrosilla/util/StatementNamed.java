@@ -125,7 +125,7 @@ public class StatementNamed {
         Object[] params = new Object[parameters.size()];
         Set<Integer> indexes = parameters.keySet();
         for (Integer index : indexes) {
-            params[index] = parameters.get(index);
+            params[index - 1] = parameters.get(index);
         }
         db.execSQL(sql, params);
     }

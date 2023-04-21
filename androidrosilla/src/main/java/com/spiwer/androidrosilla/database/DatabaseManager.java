@@ -130,7 +130,11 @@ public class DatabaseManager {
             } while (cursor.moveToNext());
 
             return list;
+        } catch (JdbcException ex) {
+            baseQuery.error(ex);
+            return list;
         } catch (Exception e) {
+            Log.e("executeList", e.getMessage(), e);
             baseQuery.error(e);
             return list;
         } finally {
@@ -181,7 +185,7 @@ public class DatabaseManager {
         if (list.isEmpty()) {
             return null;
         }
-        if (list.size() > 2) {
+        if (list.size() >= 2) {
             throw new JdbcException(EMessageRosilla.ERROR_QUERY_MANY);
         }
         return list.get(ZERO);
@@ -241,7 +245,11 @@ public class DatabaseManager {
             cursor.moveToFirst();
             Retrieve retrieve = new Retrieve(cursor);
             return baseQuery.next(retrieve);
+        } catch (JdbcException ex) {
+            baseQuery.error(ex);
+            throw ex;
         } catch (Exception e) {
+            Log.e("executeFree", e.getMessage(), e);
             baseQuery.error(e);
             return null;
         }
@@ -297,7 +305,7 @@ public class DatabaseManager {
         } catch (JdbcException ex) {
             throw ex;
         } catch (Throwable e) {
-            e.printStackTrace();
+            Log.e("insert", e.getMessage(), e);
             throw new JdbcException(EMessageRosilla.ERROR_INSERT);
         }
     }
@@ -323,8 +331,10 @@ public class DatabaseManager {
             if (quantity > ONE) {
                 throw new JdbcException(EMessageRosilla.ERROR_EDIT_MANY);
             }
+        } catch (JdbcException ex) {
+            throw ex;
         } catch (AppException e) {
-            e.printStackTrace();
+            Log.e("edit", e.getMessage(), e);
             throw new JdbcException(EMessageRosilla.ERROR_EDIT);
         }
     }
@@ -346,7 +356,7 @@ public class DatabaseManager {
         } catch (JdbcException ex) {
             throw ex;
         } catch (AppException e) {
-            e.printStackTrace();
+            Log.e("delete", e.getMessage(), e);
             throw new JdbcException(EMessageRosilla.ERROR_EDIT);
         }
     }
@@ -362,7 +372,7 @@ public class DatabaseManager {
             }
             statementNamed.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("executeUpdate", e.getMessage(), e);
             throw new JdbcException(EMessageRosilla.ERROR_EDIT);
         }
     }
@@ -457,8 +467,10 @@ public class DatabaseManager {
                 try {
                     T entity = className.newInstance();
                     return (T) entity.getRegister(retrieve);
+                } catch (JdbcException ex) {
+                    throw ex;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("executeList", e.getMessage(), e);
                     throw new JdbcException(EMessageRosilla.ERROR_QUERY);
                 }
             }

@@ -157,7 +157,7 @@ public abstract class EntityManager<T extends EntityManager> implements Serializ
     }
 
     public T where(Criteria criteria) {
-        sql.append(" WHERE ");
+        sql.append(" WHERE  __CRITERIA__ ");
         this.criteria = criteria;
         return (T) this;
     }
@@ -165,13 +165,22 @@ public abstract class EntityManager<T extends EntityManager> implements Serializ
     public T and(String name, String operator, Object value) {
         if (criteria == null) {
             criteria = new Criteria();
+            sql.append(" __CRITERIA__ ");
         }
         criteria.add(name, operator, value);
         return (T) this;
     }
 
-    public T orderBy(String fields) {
-        sql.append(" ORDER BY ").append(fields);
+    public T orderBy(String... fields) {
+        if (fields == null || fields.length == 0) {
+            return (T) this;
+        }
+        sql.append(" ORDER BY ");
+        for (String field : fields) {
+            sql.append(field)
+                    .append(",");
+        }
+        sql.delete(sql.length() - 1, sql.length());
         return (T) this;
     }
 
@@ -183,14 +192,21 @@ public abstract class EntityManager<T extends EntityManager> implements Serializ
     public List<T> list(IGenericMessage noResults)
             throws JdbcException {
         try {
-            if (criteria != null) {
-                sql.append(criteria.getConditionSelect());
-                params = criteria.params();
-            }
-            return (List<T>) DatabaseManager.getEntityList(sql.toString(), params, ((T) this).getClass(), noResults);
+            String query = processCriteria();
+            return (List<T>) DatabaseManager.getEntityList(query, params, ((T) this).getClass(), noResults);
         } finally {
             params = null;
         }
+    }
+
+    private String processCriteria() {
+        String query = sql.toString();
+        String complement = "";
+        if (criteria != null) {
+            params = criteria.params();
+            complement = criteria.getConditionSelect();
+        }
+        return query.replaceAll("__CRITERIA__", complement);
     }
 
     public T find()
@@ -198,23 +214,18 @@ public abstract class EntityManager<T extends EntityManager> implements Serializ
         return this.find(null);
     }
 
-
     public T find(IGenericMessage noResults)
             throws JdbcException {
         try {
-            if (criteria != null) {
-                sql.append(criteria.getConditionSelect());
-                params = criteria.params();
-            }
+            String query = processCriteria();
             if (params == null || params.isEmpty()) {
                 throw new JdbcException(EMessageRosilla.ERROR_QUERY_PARAMS_NOT_FOUND);
             }
-            return DatabaseManager.getEntity(sql.toString(), params, this, noResults);
+            return DatabaseManager.getEntity(query, params, this, noResults);
         } finally {
             params = null;
         }
     }
-
 
     public static <T extends EntityManager> T fill(Class<T> classType, Retrieve retrieve) {
         try {
