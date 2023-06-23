@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 
 @SuppressWarnings({"unchecked", "UnnecessaryBoxing", "WrapperTypeMayBePrimitive"})
@@ -18,9 +19,11 @@ public class Retrieve {
 
     private Cursor cursor;
     private String alias;
+    private final Map<String, Integer> columns;
 
     public Retrieve(Cursor cursor) {
         this.cursor = cursor;
+        columns = new ColumnUtil(cursor).process();
     }
 
     public Cursor getCursor() {
@@ -43,16 +46,17 @@ public class Retrieve {
 
     public <T> T getObject(String name, Class<T> type) throws JdbcException {
         try {
-            int pos = cursor.getColumnIndexOrThrow(getAlias() + name);
+            String columnName = getAlias() + "." + name;
+            Integer position = columns.get(columnName);
+            int pos = position == null ? cursor.getColumnIndexOrThrow(name) : position;
             return getObject(pos, type);
         } catch (JdbcException ex) {
             throw ex;
         } catch (Exception e) {
-            Log.e("getObject", e.getMessage(), e);
+            Log.e("getObject", e.getMessage());
             throw new JdbcException(EMessageRosilla.ERROR_DATABASE_COLUMN_NO_FOUND_NAME, name);
         }
     }
-
 
     public <T> T getObject(int pos, Class<T> type) throws JdbcException {
         try {
@@ -92,7 +96,6 @@ public class Retrieve {
         }
     }
 
-
     public <T> T getObjectOptional(int pos, Class<T> type) {
         try {
             return getObject(pos, type);
@@ -109,13 +112,14 @@ public class Retrieve {
         }
     }
 
-
     public byte[] getBlob(String name) throws JdbcException {
-        int position = cursor.getColumnIndex(getAlias() + name);
+        String currentAlias = getAlias();
+        String columnName = currentAlias.isEmpty() ? name : currentAlias + "." + name;
+        Integer position = columns.get(columnName);
         return getBlob(position);
     }
 
-    public byte[] getBlob(int position) throws JdbcException {
+    public byte[] getBlob(Integer position) throws JdbcException {
         try {
             return cursor.getBlob(position);
         } catch (Exception e) {
@@ -125,8 +129,8 @@ public class Retrieve {
     }
 
     public Date getDate(String name, String format) throws JdbcException {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getDate(position, format);
+        String value = getObject(name, String.class);
+        return parseDate(value, format);
     }
 
     public Date getDate(int position, String format) throws JdbcException {
@@ -145,8 +149,7 @@ public class Retrieve {
     }
 
     public Integer getInt(String name) throws JdbcException {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getObject(position, Integer.class);
+        return getObject(name, Integer.class);
     }
 
     public Integer getInt(int position) throws JdbcException {
@@ -154,8 +157,7 @@ public class Retrieve {
     }
 
     public Integer getIntOptional(String name) {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getIntOptional(position);
+        return getObjectOptional(name, Integer.class);
     }
 
     public Integer getIntOptional(int position) {
@@ -163,8 +165,7 @@ public class Retrieve {
     }
 
     public String getString(String name) throws JdbcException {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getString(position);
+        return getObject(name, String.class);
     }
 
     public String getString(int position) throws JdbcException {
@@ -172,8 +173,7 @@ public class Retrieve {
     }
 
     public String getStringOptional(String name) {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getStringOptional(position);
+        return getObjectOptional(name, String.class);
     }
 
     public String getStringOptional(int position) {
@@ -181,8 +181,7 @@ public class Retrieve {
     }
 
     public Float getFloat(String name) throws JdbcException {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getFloat(position);
+        return getObject(name, Float.class);
     }
 
     public Float getFloat(int position) throws JdbcException {
@@ -190,8 +189,7 @@ public class Retrieve {
     }
 
     public Float getFloatOptional(String name) {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getFloatOptional(position);
+        return getObjectOptional(name, Float.class);
     }
 
     public Float getFloatOptional(int position) {
@@ -199,8 +197,7 @@ public class Retrieve {
     }
 
     public Double getDouble(String name) throws JdbcException {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getDouble(position);
+        return getObject(name, Double.class);
     }
 
     public Double getDouble(int position) throws JdbcException {
@@ -208,17 +205,15 @@ public class Retrieve {
     }
 
     public Double getDoubleOptional(String name) {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getDoubleOptional(position);
+        return getObjectOptional(name, Double.class);
     }
 
     public Double getDoubleOptional(int position) {
         return getObjectOptional(position, Double.class);
     }
 
-    public Long getLong(String name) throws JdbcException {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getLong(position);
+    public Long getLong(String name) {
+        return getObjectOptional(name, Long.class);
     }
 
     public Long getLong(int position) throws JdbcException {
@@ -226,8 +221,8 @@ public class Retrieve {
     }
 
     public Long getLongOptional(String name) {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getLongOptional(position);
+
+        return getObjectOptional(name, Long.class);
     }
 
     public Long getLongOptional(int position) {
@@ -236,8 +231,7 @@ public class Retrieve {
 
 
     public Short getShort(String name) throws JdbcException {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getShort(position);
+        return getObject(name, Short.class);
     }
 
     public Short getShort(int position) throws JdbcException {
@@ -245,8 +239,7 @@ public class Retrieve {
     }
 
     public Short getShortOptional(String name) {
-        int position = cursor.getColumnIndex(getAlias() + name);
-        return getShortOptional(position);
+        return getObjectOptional(name, Short.class);
     }
 
     public Short getShortOptional(int position) {

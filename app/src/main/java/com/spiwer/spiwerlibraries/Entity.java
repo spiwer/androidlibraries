@@ -31,8 +31,8 @@ public class Entity extends EntityManager<Entity> implements Serializable {
 
     private Integer entCode;
     private String entName;
-    private Integer entType;
-    private Integer entTax;
+    private Unity entType;
+    private Unity entTax;
 
 
     public Entity() {
@@ -73,21 +73,21 @@ public class Entity extends EntityManager<Entity> implements Serializable {
         return this;
     }
 
-    public Integer getEntType() {
+    public Unity getEntType() {
         return entType;
     }
 
-    public Entity setEntType(Integer entType) {
+    public Entity setEntType(Unity entType) {
         super.set(COL_ENT_TYPE);
         this.entType = entType;
         return this;
     }
 
-    public Integer getEntTax() {
+    public Unity getEntTax() {
         return entTax;
     }
 
-    public Entity setEntTax(Integer entTax) {
+    public Entity setEntTax(Unity entTax) {
         super.set(COL_ENT_TAX);
         this.entTax = entTax;
         return this;
@@ -113,11 +113,11 @@ public class Entity extends EntityManager<Entity> implements Serializable {
         }
         Integer entTypeCol = retrieve.getObjectOptional(COL_ENT_TYPE, Integer.class);
         if (entTypeCol != null) {
-            setEntType(entTypeCol);
+            setEntType(new Unity(entTypeCol));
         }
         Integer entTaxCol = retrieve.getObjectOptional(COL_ENT_TAX, Integer.class);
         if (entTaxCol != null) {
-            setEntTax(entTaxCol);
+            setEntTax(new Unity(entTaxCol));
         }
 
         return this;
@@ -132,15 +132,13 @@ public class Entity extends EntityManager<Entity> implements Serializable {
             case COL_ENT_NAME:
                 return entName;
             case COL_ENT_TYPE:
-                return entType;
+                return entType == null ? null : entType.getUntCode();
             case COL_ENT_TAX:
-                return entTax;
-
+                return entTax == null ? null : entTax.getUntCode();
             default:
                 throw new AppException(EMessageRosilla.ERROR_DATABASE_COLUMN_NO_FOUND_NAME, columnName);
         }
     }
-
 
     public static Entity fill(Retrieve retrieve)
             throws JdbcException {

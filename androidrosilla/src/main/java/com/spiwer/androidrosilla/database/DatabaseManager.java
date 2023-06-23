@@ -102,7 +102,8 @@ public class DatabaseManager {
         return executeList(getSql(sql), params, baseQuery, message);
     }
 
-    public static <T> List<T> executeList(String sql, Param<String, Object> params, BaseQuery<T> baseQuery, IGenericMessage message)
+    public static <T> List<T> executeList(String sql, Param<String,
+            Object> params, BaseQuery<T> baseQuery, IGenericMessage message)
             throws JdbcException {
         if (showLog) {
             Log.i("SQL:", sql + " params: " + params);
